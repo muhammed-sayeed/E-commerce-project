@@ -54,7 +54,7 @@ const signView = (req, res) => {
 
 const postsignupView = async (req, res) => {
  
-    res.redirect('user/signup')
+  
  
 console.log("hii");
 console.log(req.body);
@@ -114,11 +114,7 @@ const{name,phone,email,password,conform} = req.session.user1
     res.render('user/login')
    }
   
-  //  const otpView = (req,res)=>{
-
-  //   res.render('user/otp')
-  //  }
-
+  
 
 
 
