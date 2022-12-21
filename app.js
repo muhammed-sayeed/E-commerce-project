@@ -32,6 +32,13 @@ const fileFilter = (req,file,cb)=>{
 app.set('views',path.join(__dirname,"views"))
 app.set('view engine', 'ejs')
 app.use(express.static(path.join(__dirname,'public')))
+// app.use(express.static(path.resolve('./public')))
+
+
+
+// app.use(express.static(__dirname+'/public/admin'))
+
+
 
 
 
@@ -53,7 +60,7 @@ const userRouter = require('./routes/userroutes')
 const adminRouter = require('./routes/adminroutes')
 
 app.use(express.urlencoded({ extended: false }));
-app.use(multer({storage : filestorage,fileFilter:fileFilter}).single('image')) 
+app.use(multer({storage : filestorage,fileFilter:fileFilter}).fields([{name:"image",maxCount:2}]))
 
 
 

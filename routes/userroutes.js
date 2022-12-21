@@ -10,8 +10,11 @@ const {
     postsignupView,
     postOtp,
     postloginView,
-    
+    viewMore,
+    getCart,
+    cartError,
     logout,
+    addTocart
    
 } = require('../controller/usercontrller')
 
@@ -28,6 +31,10 @@ router.post('/otp',postOtp)
 router.post('/home',postloginView)
 
 router.get('/logout',logout)
+router.get('/productdetails/:id',viewMore)
+router.get('/gotocart',getCart)
+router.get('/carterror',cartError)
+router.get('/addtocart/:id',addTocart)
 
 
 
