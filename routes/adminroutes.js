@@ -1,4 +1,4 @@
-
+const {varifyAdmin} = require('../Middlewear/varifyAdmin');
 const  {
     adminLogin,
     postAdmin,
@@ -27,23 +27,23 @@ const router = require('./userroutes')
 
 router.get('/admin',adminLogin)
 router.post('/adminhome',postAdmin)
-router.get('/home',adminHome)
+router.get('/home',varifyAdmin,adminHome)
 
-router.get('/userpage',userPage)
-router.get('/block/:id',block)
-router.get('/unblock/:id',unblock)
-router.get('/catpage',catPage)
-router.get('/addcat',addCategory)
-router.post('/add',postaddCategory)
-router.get('/delcategory/:id',deleteCategory)
-router.get('/editcategory/:id',editCat)
-router.post('/updatecategory/:id',postEdit)
-router.get('/productlist',productList)
-router.get('/addproduct',addProduct)
-router.post('/postaddproduct',postAddproduct)
-router.get('/deletproduct/:id',deleteProduct)
-router.get('/updatepage/:id',updatePage)
-router.post('/updateproduct/:id',updateproduct)
+router.get('/userpage',varifyAdmin,userPage)
+router.get('/block/:id',varifyAdmin,block)
+router.get('/unblock/:id',varifyAdmin,unblock)
+router.get('/catpage',varifyAdmin,catPage)
+router.get('/addcat',varifyAdmin,addCategory)
+router.post('/add',varifyAdmin,postaddCategory)
+router.get('/delcategory/:id',varifyAdmin,deleteCategory)
+router.get('/editcategory/:id',varifyAdmin,editCat)
+router.post('/updatecategory/:id',varifyAdmin,postEdit)
+router.get('/productlist',varifyAdmin,productList)
+router.get('/addproduct',varifyAdmin,addProduct)
+router.post('/postaddproduct',varifyAdmin,postAddproduct)
+router.get('/deletproduct/:id',varifyAdmin,deleteProduct)
+router.get('/updatepage/:id',varifyAdmin,updatePage)
+router.post('/updateproduct/:id',varifyAdmin,updateproduct)
 
 module.exports = router
 
