@@ -14,7 +14,10 @@ const {
     getCart,
     cartError,
     logout,
-    addTocart
+    addTocart,
+    removefromcart,
+    quantityChange,
+    shopView 
    
 } = require('../controller/usercontrller')
 
@@ -35,6 +38,9 @@ router.get('/productdetails/:id',viewMore)
 router.get('/gotocart',getCart)
 router.get('/carterror',cartError)
 router.get('/addtocart/:id',addTocart)
+router.delete('/removefromcart/',removefromcart)
+router.patch('/qtychange/',quantityChange),
+router.get('/shopview',shopView )
 
 
 

@@ -42,10 +42,10 @@ const postloginView = async (req, res) => {
     console.log(data);
     if (data) {
       console.log("log success");
-     
-       req.session.login = loginDetails;
+
+      req.session.login = loginDetails;
       console.log(req.session.login);
-      console.log('this is login daata');
+      console.log("this is login daata");
       res.redirect("/");
     } else {
       console.log("pass invalid");
@@ -100,22 +100,24 @@ const postOtp = async (req, res) => {
       });
       await user.save();
       req.session.login = user;
-    
-    
 
       res.redirect("/");
     }
   });
 };
 
-const getCart = async(req, res) => {
-  
-  
+const shopView = (req, res) => {
+  res.render("user/shoppage");
+};
+
+const getCart = async (req, res) => {
   if (req.session.login) {
     const userId = req.session.login._id;
     console.log(userId);
-    const cartitems =  await cart.findOne({owner:mongoose.Types.ObjectId(userId)}).populate('items.product')
-    res.render("user/cart",{cartitems,owner:req.session.login});
+    const cartitems = await cart
+      .findOne({ owner: mongoose.Types.ObjectId(userId) })
+      .populate("items.product");
+    res.render("user/cart", { cartitems, owner: req.session.login });
   } else {
     res.redirect("/carterror");
   }
@@ -125,16 +127,16 @@ const addTocart = async (req, res) => {
   const proid = req.params.id;
   const userId = req.session.login._id;
   console.log(userId);
-  console.log('this is login iddd');
-  console.log(req.session.login)
+  console.log("this is login iddd");
+  console.log(req.session.login);
   console.log(proid);
   console.log(userId);
   const Product = await product.findOne({ _id: proid });
   const user = await cart.findOne({ owner: userId });
   if (Product.stock < 1) {
-   console.log('stock unavilable')
+    console.log("stock unavilable");
   } else {
-    console.log('stock available');
+    console.log("stock available");
     if (!user) {
       console.log("cart is empty");
       const newCart = await cart({
@@ -144,53 +146,119 @@ const addTocart = async (req, res) => {
       });
       await newCart.save();
       console.log("added successfully");
-    }else{
-      console.log('productlist-----------------------------');
+    } else {
+      console.log("productlist-----------------------------");
       const productlist = await cart.findOne({
-        owner:userId,
-        "items.product":proid
-      })
+        owner: userId,
+        "items.product": proid,
+      });
       console.log(productlist);
-      if(productlist!==null){
-        console.log('product exist');
+      if (productlist !== null) {
+        console.log("product exist");
         console.log(productlist);
-        await cart.findOneAndUpdate({
-          owner:userId,
-        "items.product":proid
-      },{
-         $inc:{
-          "items.$.quantity":1,
-          "items.$.totalprice":Product.price,
-          cartTotal:Product.price
-         }   
-      })
-      }else{
-        console.log('new pro adding----------------------------');
-        console.log(userId);
-       const nweproAdd= await cart.findOneAndUpdate(
-        {owner:userId},
-        {
-          $push:{
-            items:{product:proid,totalprice:Product.price,}
+        await cart.findOneAndUpdate(
+          {
+            owner: userId,
+            "items.product": proid,
           },
-        $inc:{
-          cartTotal:Product.price
-             }
-            }) 
-     
+          {
+            $inc: {
+              "items.$.quantity": 1,
+              "items.$.totalprice": Product.price,
+              cartTotal: Product.price,
+            },
+          }
+        );
+      } else {
+        console.log("new pro adding----------------------------");
+        console.log(userId);
+        const nweproAdd = await cart.findOneAndUpdate(
+          { owner: userId },
+          {
+            $push: {
+              items: { product: proid, totalprice: Product.price },
+            },
+            $inc: {
+              cartTotal: Product.price,
+            },
+          }
+        );
       }
-     
     }
   }
 };
 
-const removeFromcart = async(req,res)=>{
-  let userdata = req.session.login
+const removefromcart = async (req, res) => {
+  console.log(
+    "..........................................................................................."
+  );
+  let userdata = req.session.login;
   console.log(userdata);
-  proid = req.query.productid
-  let Product = await product.findOne({_id:proid})
-  
-}
+  const proid = req.query.productid;
+  let products = await product.findOne({ _id: proid });
+  let carts = await cart.findOne({ owner: userdata._id });
+
+  console.log(".........................");
+
+  console.log(carts);
+
+  console.log(".........................");
+
+  let index = await carts.items.findIndex((el) => {
+    return el.product == proid;
+  });
+  console.log("index finded");
+  console.log(index);
+  let price = carts.items[index].totalprice;
+  console.log(price);
+
+  let deletingproduct = await cart.findOneAndUpdate(
+    { owner: userdata._id },
+    {
+      $pull: {
+        items: { product: proid },
+      },
+      $inc: { cartTotal: -price },
+    }
+  );
+  deletingproduct.save();
+  res.json("succeed");
+};
+
+const quantityChange = async (req, res) => {
+  console.log("starting----------------------------------------");
+
+  console.log(req.query);
+  const products = await product.findOne({ _id: req.query.productid });
+  productprice = products.price;
+  const cartcount = req.query.cartcount;
+  console.log("changing started----------------------------------");
+  console.log(cartcount);
+  if (cartcount == 1) {
+    var product_price = products.price;
+  } else {
+    var product_price = -products.price;
+    console.log("entered-------------------------------------------");
+  }
+  console.log("hi--------------------------------------------");
+  console.log(product_price);
+  let updatedcart = await cart.findOneAndUpdate(
+    {
+      _id: req.query.cartid,
+      "items.product": req.query.productid,
+    },
+    {
+      $inc: {
+        "items.$.quantity": cartcount,
+        "items.$.totalprice": product_price,
+        cartTotal: product_price,
+      },
+    }
+  );
+  console.log("hoi------------------------------------------");
+
+  res.json();
+};
 const cartError = (req, res) => {
   res.render("user/carterror");
 };
@@ -213,4 +281,7 @@ module.exports = {
   getCart,
   cartError,
   addTocart,
+  removefromcart,
+  quantityChange,
+  shopView,
 };
