@@ -7,7 +7,7 @@ const user = require("../model/usermodel");
 const product = require("../model/product");
 const category = require("../model/category");
 const cart = require("../model/cart");
-// const product = require("../model/product");
+const address = require("../model/address");
 
 const homeView = async (req, res) => {
   const productz = await product.find();
@@ -255,12 +255,55 @@ const quantityChange = async (req, res) => {
       },
     }
   );
+  let total = updatedcart.cartTotal;
+  let index = updatedcart.items.findIndex(
+    (objitems) => objitems.product == req.query.productid
+  );
+  let qty = updatedcart.items[index].quantity;
+  console.log(qty + "jjjjjjjj");
+  console.log(total);
   console.log("hoi------------------------------------------");
 
-  res.json();
+  res.json({ total, qty });
 };
 const cartError = (req, res) => {
   res.render("user/carterror");
+};
+
+const profilePage = (req, res) => {
+  if (req.session.login) {
+    console.log("profile---------------------------------------");
+    const userdetails = req.session.login;
+    console.log(userdetails);
+    res.render("user/profile", { userdetails });
+  } else {
+    res.redirect("/login");
+  }
+};
+
+const addAddres = async (req, res) => {
+  console.log(req.body);
+  const userId = req.session.login._id;
+  const addreexist = await address.findOne({ user: userId });
+  console.log("addres------------------------------------------");
+  if (addreexist) {
+    await addres.findOneAndUpdate(
+      { userId },
+      { $push: { address: [req.body] } }
+    );
+    console.log("searching-------------------------------------");
+    res.redirect("/profile");
+  } else {
+    console.log("else working--------------------------------------");
+    const useraddres = await address({
+      user: userId,
+      address: [req.body],
+    });
+    console.log(useraddres);
+    useraddres.save().then(() => {
+      res.redirect("/profile");
+    });
+  }
 };
 
 const logout = (req, res) => {
@@ -284,4 +327,6 @@ module.exports = {
   removefromcart,
   quantityChange,
   shopView,
+  profilePage,
+  addAddres,
 };

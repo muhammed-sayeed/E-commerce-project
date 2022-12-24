@@ -67,7 +67,7 @@
                                                             class="btn btn-warning"
                                                             onclick="changequantity('<%-cartitems._id-%>','<%-cart.product._id-%>','-1')">-</button>
                                                         <% } %>
-                                                            <input type="" style="width: 30px;"
+                                                            <input type="" id="<%= cart.product._id %>" style="width: 30px;"
                                                                 value="<%= cart.quantity %>">
                                                             <button type="button" class="btn btn-warning"
                                                                 onclick="changequantity('<%-cartitems._id-%>','<%-cart.product._id-%>','1')">+</button>
@@ -122,7 +122,7 @@
                                                 <h5>Subtotal</h5>
                                             </td>
                                             <td>
-                                                <h5>
+                                                <h5 id="total">
                                                     <%= cartitems.cartTotal %>
                                                 </h5>
                                             </td>
@@ -191,9 +191,12 @@
             console.log(cartid);
             console.log(productid);
             console.log(count);
+          
             let changeqty = await axios.patch(`/qtychange?cartid=${cartid}&productid=${productid}&cartcount=${count}
            `)
-            location.reload();
+            console.log(changeqty.data.qty);
+            document.getElementById('total').innerHTML = changeqty.data.total
+            document.getElementById(productid).value = changeqty.data.qty
         }
     </script>
     <%- include('partials/footer.ejs') -%>

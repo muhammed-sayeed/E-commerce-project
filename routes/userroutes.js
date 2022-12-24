@@ -17,7 +17,9 @@ const {
     addTocart,
     removefromcart,
     quantityChange,
-    shopView 
+    shopView ,
+    profilePage,
+    addAddres
    
 } = require('../controller/usercontrller')
 
@@ -41,6 +43,8 @@ router.get('/addtocart/:id',addTocart)
 router.delete('/removefromcart/',removefromcart)
 router.patch('/qtychange/',quantityChange),
 router.get('/shopview',shopView )
+router.get('/profile',profilePage)
+router.post('/addaddres',addAddres)
 
 
 
